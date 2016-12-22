@@ -407,6 +407,8 @@ MODULE OpenCMISS_Iron
   PUBLIC cmfe_SolverType,cmfe_Solver_Finalise,cmfe_Solver_Initialise
 
   PUBLIC cmfe_SolverEquationsType,cmfe_SolverEquations_Finalise,cmfe_SolverEquations_Initialise
+  
+  PUBLIC cmfe_print_equations_type
 
 !!==================================================================================================================================
 !!
@@ -61771,5 +61773,22 @@ CONTAINS
   !================================================================================================================================
   !
 
+  SUBROUTINE cmfe_Print_equations_type(cmfe_equ_ty, str, err)
+   TYPE(cmfe_EquationsType), INTENT(IN)  :: cmfe_equ_ty
+   CHARACTER(LEN=*), INTENT(IN)      :: str
+   INTEGER(INTG), INTENT(OUT) :: err !<The error code.
+   
+  !  IF (allocated(cmfe_equ_ty)) THEN
+     IF (associated(cmfe_equ_ty%equations) .eqv. .FALSE.) THEN
+      WRITE(*,*) 'cmfe_equations_type not associated'
+      RETURN
+     ELSE
+       CALL Print_equations_type(cmfe_equ_ty%Equations, str, err)
+     ENDIF
+   !ELSE
+   !  continue
+   !ENDIF
+  
+  END SUBROUTINE !cmfe_print_equations_type
 
 END MODULE OpenCMISS_Iron

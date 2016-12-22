@@ -3276,14 +3276,16 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
   !
  CONTAINS
 
- SUBROUTINE Print_equations_type(equ_ty, str)
+ SUBROUTINE Print_equations_type(equ_ty, str, err)
    TYPE(EQUATIONS_TYPE), INTENT(IN)  :: equ_ty
    CHARACTER(LEN=*), INTENT(IN)      :: str
+   INTEGER(INTG), INTENT(OUT) :: err !<The error code.
    
    WRITE(*,*) 'Information for '//str//' of type EQUATIONS_TYPE'
    
   ! IF (allocated(equ_ty%EQUATIONS_SET)) THEN
   !   write(*,*) 'pointer to the equations_set allocated' 
+
      IF (associated(equ_ty%EQUATIONS_SET)) THEN
        write(*,*) 'pointer to the equations_set associated'
      ELSE
@@ -3339,6 +3341,8 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
    WRITE(*,*) ''
         
    RETURN
+   
+   
  END SUBROUTINE Print_equations_type
  
 !  TYPE EQUATIONS_TYPE
