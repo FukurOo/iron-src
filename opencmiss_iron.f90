@@ -408,7 +408,17 @@ MODULE OpenCMISS_Iron
 
   PUBLIC cmfe_SolverEquationsType,cmfe_SolverEquations_Finalise,cmfe_SolverEquations_Initialise
   
-  PUBLIC cmfe_print_equations_type
+  PUBLIC cmfe_Print_equations_type
+  
+  PUBLIC cmfe_Print_equationsSet_type
+  
+  PUBLIC cmfe_Print_equationsSet_index
+  
+  PUBLIC cmfe_Print_problem_type
+  
+  PUBLIC cmfe_Print_solver_type
+  
+  PUBLIC cmfe_Print_solverEquations_type
 
 !!==================================================================================================================================
 !!
@@ -61773,22 +61783,84 @@ CONTAINS
   !================================================================================================================================
   !
 
-  SUBROUTINE cmfe_Print_equations_type(cmfe_equ_ty, str, err)
-   TYPE(cmfe_EquationsType), INTENT(IN)  :: cmfe_equ_ty
-   CHARACTER(LEN=*), INTENT(IN)      :: str
-   INTEGER(INTG), INTENT(OUT) :: err !<The error code.
+  SUBROUTINE cmfe_Print_equations_type(cmfe_equ, str, err)
+   TYPE(cmfe_EquationsType), INTENT(IN)  :: cmfe_equ
+   CHARACTER(LEN=*), INTENT(IN)          :: str
+   INTEGER(INTG), INTENT(OUT)            :: err !<The error code.
    
   !  IF (allocated(cmfe_equ_ty)) THEN
-     IF (associated(cmfe_equ_ty%equations) .eqv. .FALSE.) THEN
+     IF (.NOT. associated(cmfe_equ%equations)) THEN
       WRITE(*,*) 'cmfe_equations_type not associated'
       RETURN
      ELSE
-       CALL Print_equations_type(cmfe_equ_ty%Equations, str, err)
-     ENDIF
-   !ELSE
-   !  continue
-   !ENDIF
+       CALL Print_equations_type(cmfe_equ%Equations, str, err)
+       RETURN
+     ENDIF  
+  END SUBROUTINE !cmfe_Print_equations_type
   
-  END SUBROUTINE !cmfe_print_equations_type
+  SUBROUTINE cmfe_Print_equationsSet_type(cmfe_equSet, str, err)
+   TYPE(cmfe_EquationsSetType), INTENT(IN)  :: cmfe_equSet
+   CHARACTER(LEN=*), INTENT(IN)             :: str
+   INTEGER(INTG), INTENT(OUT)               :: err !<The error code.
 
+   IF (.NOT. associated(cmfe_equSet%equationsSet)) THEN
+     WRITE(*,*) 'cmfe_equationsSet_type not associated'
+     RETURN
+   ELSE
+     CALL Print_equations_set_type(cmfe_equSet%equationsSet, str, err)
+     RETURN
+   ENDIF
+  END SUBROUTINE !cmfe_Print_equationsSet_type
+  
+  SUBROUTINE cmfe_Print_equationsSet_index(ESindex,err)
+   INTEGER(INTG) :: ESindex
+   INTEGER(INTG), INTENT(OUT)               :: err !<The error code.
+   WRITE(*,*) '-------------------------------------'
+   CALL Print_equationsSet_index(ESindex, err)
+   WRITE(*,*) '-------------------------------------'
+   RETURN
+  END SUBROUTINE !cmfe_Print_equationsSet_index
+  
+  SUBROUTINE cmfe_Print_problem_type(cmfe_problem, str, err)
+   TYPE(cmfe_ProblemType), INTENT(IN)  :: cmfe_problem
+   CHARACTER(LEN=*), INTENT(IN)        :: str
+   INTEGER(INTG), INTENT(OUT)          :: err !<The error code.
+
+   IF (.NOT. associated(cmfe_problem%problem)) THEN
+     WRITE(*,*) 'cmfe_ProblemType not associated'
+     RETURN
+   ELSE
+     CALL Print_problem_type(cmfe_problem%problem, str, err)
+     RETURN
+   ENDIF
+  END SUBROUTINE !cmfe_Print_problem_type
+  
+  SUBROUTINE cmfe_Print_solver_type(cmfe_solver, str, err)
+   TYPE(cmfe_SolverType), INTENT(IN)  :: cmfe_solver
+   CHARACTER(LEN=*), INTENT(IN)             :: str
+   INTEGER(INTG), INTENT(OUT)               :: err !<The error code.
+
+   IF (.NOT. associated(cmfe_solver%solver)) THEN
+     WRITE(*,*) 'cmfe_SolverType not associated'
+     RETURN
+   ELSE
+     CALL Print_solver_type(cmfe_solver%solver, str, err)
+     RETURN
+   ENDIF
+  END SUBROUTINE !cmfe_Print_solver_type
+  
+  SUBROUTINE cmfe_Print_solverEquations_type(cmfe_solEqu, str, err)
+   TYPE(cmfe_SolverEquationsType), INTENT(IN)  :: cmfe_solEqu
+   CHARACTER(LEN=*), INTENT(IN)             :: str
+   INTEGER(INTG), INTENT(OUT)               :: err !<The error code.
+
+   IF (.NOT. associated(cmfe_solEqu%SolverEquations)) THEN
+     WRITE(*,*) 'cmfe_SolverEquationsType not associated'
+     RETURN
+   ELSE
+     CALL Print_solverEquations_type(cmfe_solEqu%SolverEquations, str, err)
+     RETURN
+   ENDIF
+  END SUBROUTINE !cmfe_Print_solverEquations_type
+    
 END MODULE OpenCMISS_Iron

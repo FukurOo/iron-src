@@ -3275,89 +3275,340 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
   !================================================================================================================================
   !
  CONTAINS
-
+!***************************************************************************************************************
+!***************************************************************************************************************
  SUBROUTINE Print_equations_type(equ_ty, str, err)
    TYPE(EQUATIONS_TYPE), INTENT(IN)  :: equ_ty
    CHARACTER(LEN=*), INTENT(IN)      :: str
    INTEGER(INTG), INTENT(OUT) :: err !<The error code.
-   
+      
+   WRITE(*,*) ''
    WRITE(*,*) 'Information for '//str//' of type EQUATIONS_TYPE'
+   WRITE(*,*) '========================================================='
    
-  ! IF (allocated(equ_ty%EQUATIONS_SET)) THEN
-  !   write(*,*) 'pointer to the equations_set allocated' 
+   !!! CAUTION! 'associatated' can be undefined! --> Segmentation Fault
+   IF (associated(equ_ty%EQUATIONS_SET)) THEN
+     WRITE(*,*) 'pointer to the equations_set                 associated'
+   ELSE
+     WRITE(*,*) 'pointer to the equations_set             NOT associated' 
+   ENDIF
+   
+   WRITE(*,*) 'Type is finished: ', equ_ty%EQUATIONS_FINISHED
+   WRITE(*,*) 'Linearity      : ', equ_ty%LINEARITY
+   WRITE(*,*) 'Time dependence: ',  equ_ty%TIME_DEPENDENCE
+   WRITE(*,*) 'Output type    : ', equ_ty%OUTPUT_TYPE
+   WRITE(*,*) 'Sparsity type  : ', equ_ty%SPARSITY_TYPE
+   WRITE(*,*) 'Lumping type   : ', equ_ty%LUMPING_TYPE
 
-     IF (associated(equ_ty%EQUATIONS_SET)) THEN
-       write(*,*) 'pointer to the equations_set associated'
-     ELSE
-       write(*,*) 'pointer to the equations_set NOT associcated' 
-     ENDIF
-  ! ELSE
-  !   write(*,*) 'pointer to the equations_set NOT allocated'
-  ! ENDIF
+   IF (associated(equ_ty%INTERPOLATION)) THEN
+     WRITE(*,*) 'pointer to the interpolation information     associated'
+   ELSE
+     WRITE(*,*) 'pointer to the interpolation information NOT associated' 
+   ENDIF  
+   
+   IF (associated(equ_ty%EQUATIONS_MAPPING)) THEN
+     WRITE(*,*) 'pointer to the equations mapping             associated'
+   ELSE
+     WRITE(*,*) 'pointer to the equations mapping         NOT associated' 
+   ENDIF
 
-   
-   write(*,*) 'Type is finished: ', equ_ty%EQUATIONS_FINISHED
-   write(*,*) 'Linearity ', equ_ty%LINEARITY, &
-     & ', Time dependence ', equ_ty%TIME_DEPENDENCE, &
-     & ', Output type ', equ_ty%OUTPUT_TYPE, &
-     & ', Sparsity type ', equ_ty%SPARSITY_TYPE, &
-     & ', Lumping type ', equ_ty%LUMPING_TYPE
-
-   !IF (allocated(equ_ty%INTERPOLATION)) THEN
-   !  write(*,*) 'pointer to the interpolation information allocated'
-      IF (associated(equ_ty%INTERPOLATION)) THEN
-       write(*,*) 'pointer to the interpolation information associated'
-     ELSE
-       write(*,*) 'pointer to the interpolation information NOT associcated' 
-     ENDIF
-   !ELSE
-   !  write(*,*) 'pointer to the interpolation information NOT allocated'
-   !ENDIF
-  
-   
-  ! IF (allocated(equ_ty%EQUATIONS_MAPPING)) THEN
-  !   write(*,*) 'pointer to the equations mapping allocated'
-     IF (associated(equ_ty%EQUATIONS_MAPPING)) THEN
-       write(*,*) 'pointer to the equations mapping associated'
-     ELSE
-       write(*,*) 'pointer to the equations mapping NOT associcated' 
-     ENDIF
-  ! ELSE
-  !   write(*,*) 'pointer to the equations mapping NOT allocated'
-  ! ENDIF
-   
-  ! IF (allocated(equ_ty%EQUATIONS_MATRICES)) THEN
-  !   write(*,*) 'pointer to the equations matrices allocated'
-     IF (associated(equ_ty%EQUATIONS_MATRICES)) THEN
-       write(*,*) 'pointer to the equations matrices associated'
-     ELSE
-       write(*,*) 'pointer to the equations matrices NOT associcated' 
-     ENDIF
-  ! ELSE
-  !   write(*,*) 'pointer to the equations matrices NOT allocated'
-  ! ENDIF
-   
+   IF (associated(equ_ty%EQUATIONS_MATRICES)) THEN
+     WRITE(*,*) 'pointer to the equations matrices            associated'
+   ELSE
+     WRITE(*,*) 'pointer to the equations matrices        NOT associated' 
+   ENDIF
    
    WRITE(*,*) ''
         
    RETURN
+END SUBROUTINE Print_equations_type
+!***************************************************************************************************************
+SUBROUTINE Print_equations_set_type(equ_set_ty, str, err)
+   TYPE(EQUATIONS_SET_TYPE), INTENT(IN)  :: equ_set_ty
+   CHARACTER(LEN=*), INTENT(IN)      :: str
+   INTEGER(INTG), INTENT(OUT) :: err !<The error code.
+
+   WRITE(*,*) ''
+   WRITE(*,*) 'Information for '//str//' of type EQUATIONS_SET_TYPE'
+   WRITE(*,*) '==============================================================='
+
+   WRITE(*,*) 'User number:      ', equ_set_ty%USER_NUMBER  !The user identifying number of the equations set
+   WRITE(*,*) 'Global number:    ', equ_set_ty%GLOBAL_NUMBER !The global index of the equations set in the region.
+   WRITE(*,*) 'Type is finished: ', equ_set_ty%EQUATIONS_SET_FINISHED
+
+   IF (associated(equ_set_ty%EQUATIONS_SETS)) THEN
+     WRITE(*,*) 'pointer to the equations sets                      associated'
+   ELSE
+     WRITE(*,*) 'pointer to the equations sets                  NOT associated' 
+   ENDIF  
+
+   IF (associated(equ_set_ty%REGION)) THEN
+     WRITE(*,*) 'pointer to the region                              associated'
+   ELSE
+     WRITE(*,*) 'pointer to the region                          NOT associated' 
+   ENDIF
+
+   IF (allocated(equ_set_ty%SPECIFICATION)) THEN
+     WRITE(*,*) 'specification array status (eg. [class, type, subtype], unused identifiers are set 0):'
+     WRITE(*,*) '[', equ_set_ty%SPECIFICATION,']'
+   ELSE
+     WRITE(*,*) 'specification array                            NOT  allocated'
+   ENDIF
    
+   WRITE(*,*) 'Solution method: ', equ_set_ty%SOLUTION_METHOD
+
+   WRITE(*,*) 'ToDo: subroutine Print_EQUATIONS_SET_GEOMETRY_TYPE'
+!    TYPE(EQUATIONS_SET_GEOMETRY_TYPE) :: GEOMETRY !<The geometry information for the equations set.
+
+   IF (associated(equ_set_ty%MATERIALS)) THEN
+     WRITE(*,*) 'pointer to the materials information               associated'
+   ELSE
+     WRITE(*,*) 'pointer to the materials information           NOT associated' 
+   ENDIF 
+
+   IF (associated(equ_set_ty%SOURCE)) THEN
+     WRITE(*,*) 'pointer to the source information                  associated'
+   ELSE
+     WRITE(*,*) 'pointer to the source information              NOT associated' 
+   ENDIF
+
+   WRITE(*,*) 'ToDo: subroutine Print_EQUATIONS_SET_DEPENDENT_TYPE'
+!    TYPE(EQUATIONS_SET_DEPENDENT_TYPE) :: DEPENDENT !<The depedent variable information for the equations set.
+
+   IF (associated(equ_set_ty%INDEPENDENT)) THEN
+     WRITE(*,*) 'pointer to the indepedent field information        associated'
+   ELSE
+     WRITE(*,*) 'pointer to the indepedent field information    NOT associated' 
+   ENDIF
+
+   IF (associated(equ_set_ty%ANALYTIC)) THEN
+     WRITE(*,*) 'pointer to the analytic setup information          associated'
+   ELSE
+     WRITE(*,*) 'pointer to the analytic setup information      NOT associated' 
+   ENDIF
+
+   IF (associated(equ_set_ty%DERIVED)) THEN
+     WRITE(*,*) 'pointer to the derived field information           associated'
+   ELSE
+     WRITE(*,*) 'pointer to the derived field information       NOT associated' 
+   ENDIF
+
+   IF (associated(equ_set_ty%EQUATIONS)) THEN
+     WRITE(*,*) 'pointer to the derived equations information       associated'
+   ELSE
+     WRITE(*,*) 'pointer to the derived equations information   NOT associated' 
+   ENDIF
+
+   IF (associated(equ_set_ty%BOUNDARY_CONDITIONS)) THEN
+     WRITE(*,*) 'pointer to the boundary condition information     associated'
+   ELSE
+     WRITE(*,*) 'pointer to the boundary condition information  NOT associated' 
+   ENDIF
+
+   WRITE(*,*) 'ToDo: subroutine Print_EQUATIONS_SET_EQUATIONS_SET_FIELD_TYPE'
+!    TYPE(EQUATIONS_SET_EQUATIONS_SET_FIELD_TYPE) :: EQUATIONS_SET_FIELD !<A pointer to the equations set field for the equations set.
+
+   WRITE(*,*) ''     
+   RETURN
+END SUBROUTINE Print_equations_set_type
+!***************************************************************************************************************
+SUBROUTINE Print_equationsSet_index(ESindex,err)
+   INTEGER(INTG) :: ESindex
+   INTEGER(INTG), INTENT(OUT)      :: err !<The error code.
+   WRITE(*,*) 'Equations set index: ', ESindex
+   RETURN
+END SUBROUTINE
+!***************************************************************************************************************
+SUBROUTINE Print_problem_type(problem, str, err)
+   TYPE(PROBLEM_TYPE), INTENT(IN)  :: problem
+   CHARACTER(LEN=*), INTENT(IN)    :: str
+   INTEGER(INTG), INTENT(OUT)      :: err !<The error code.
+
+   WRITE(*,*) ''
+   WRITE(*,*) 'Information for '//str//' of type PROBLEM_TYPE'
+   WRITE(*,*) '========================================================='
+
+   WRITE(*,*) 'User number:      ', problem%USER_NUMBER  !The user defined identifier for the problem
+   WRITE(*,*) 'Global number:    ', problem%GLOBAL_NUMBER !Global number of the problem in the list of problems
+   WRITE(*,*) 'Type is finished: ', problem%PROBLEM_FINISHED
+
+   IF (associated(problem%PROBLEMS)) THEN
+     WRITE(*,*) 'pointer to the problems for this problem     associated'
+   ELSE
+     WRITE(*,*) 'pointer to the problems for this problem NOT associated' 
+   ENDIF
+ 
+   IF (allocated(problem%SPECIFICATION)) THEN
+     WRITE(*,*) 'specification array status (eg. [class, type, subtype], unused identifiers are set 0):'
+     WRITE(*,*) '[', problem%SPECIFICATION,']'
+   ELSE
+     WRITE(*,*) 'specification array                      NOT  allocated'
+   ENDIF
+
+   IF (associated(problem%CONTROL_LOOP)) THEN
+     WRITE(*,*) 'pointer to the control loop information      associated'
+   ELSE
+     WRITE(*,*) 'pointer to the control loop information  NOT associated' 
+   ENDIF  
+
+   WRITE(*,*) ''     
+   RETURN
+END SUBROUTINE Print_problem_type
+!***************************************************************************************************************
+SUBROUTINE Print_solver_type(solver, str, err)
+   TYPE(SOLVER_TYPE), INTENT(IN)   :: solver
+   CHARACTER(LEN=*), INTENT(IN)    :: str
+   INTEGER(INTG), INTENT(OUT)      :: err !<The error code.
+
+   WRITE(*,*) ''
+   WRITE(*,*) 'Information for '//str//' of type SOLVER_TYPE'
+   WRITE(*,*) '========================================================================'
+
+   IF (associated(solver%SOLVERS)) THEN
+     WRITE(*,*) 'pointer to the control loop solvers                         associated'
+   ELSE
+     WRITE(*,*) 'pointer to the control loop solvers                     NOT associated' 
+   ENDIF 
+   !A pointer to the control loop solvers. Note that if this is a linked solver this will be NULL and solvers should be accessed through the linking solver.
+
+   WRITE(*,*) 'Global number:    ', solver%GLOBAL_NUMBER !Global number of the solver in the list of solvers
    
- END SUBROUTINE Print_equations_type
- 
-!  TYPE EQUATIONS_TYPE
-!    TYPE(EQUATIONS_SET_TYPE), POINTER :: EQUATIONS_SET !<A pointer to the equations_set
-!    LOGICAL :: EQUATIONS_FINISHED !<Is .TRUE. if the equations have finished being created, .FALSE. if not.
-!    INTEGER(INTG) :: LINEARITY !<The equations linearity type \see EQUATIONS_SET_CONSTANTS_LinearityTypes,EQUATIONS_SET_CONSTANTS
-!    INTEGER(INTG) :: TIME_DEPENDENCE !<The equations time dependence type \see EQUATIONS_SET_CONSTANTS_TimeDependenceTypes,EQUATIONS_SET_CONSTANTS
-!    INTEGER(INTG) :: OUTPUT_TYPE !<The output type for the equations \see EQUATIONS_ROUTINES_EquationsOutputTypes,EQUATIONS_ROUTINES
-!    INTEGER(INTG) :: SPARSITY_TYPE !<The sparsity type for the equation matrices of the equations \see EQUATIONS_ROUTINES_EquationsSparsityTypes,EQUATIONS_ROUTINES
-!    INTEGER(INTG) :: LUMPING_TYPE !<The lumping type for the equation matrices of the equations \see EQUATIONS_ROUTINES_EquationsLumpingTypes,EQUATIONS_ROUTINES
-!    TYPE(EQUATIONS_INTERPOLATION_TYPE), POINTER :: INTERPOLATION !<A pointer to the interpolation information used in the equations.
-!    TYPE(EQUATIONS_MAPPING_TYPE), POINTER :: EQUATIONS_MAPPING !<A pointer to the equations mapping for the equations.
-!    TYPE(EQUATIONS_MATRICES_TYPE), POINTER :: EQUATIONS_MATRICES !<A pointer to the equations matrices and vectors used for the equations.
-!  END TYPE EQUATIONS_TYPE
- 
+   IF (associated(solver%LINKING_SOLVER)) THEN
+     WRITE(*,*) 'pointer to any solver that is linking to this solver        associated'
+   ELSE
+     WRITE(*,*) 'pointer to any solver that is linking to this solver    NOT associated' 
+   ENDIF 
+
+   WRITE(*,*) 'Number of linked solvers: ', solver%NUMBER_OF_LINKED_SOLVERS
+   
+   IF (allocated(solver%LINKED_SOLVERS)) THEN
+     WRITE(*,*) 'linked solver index array                                    allocated'
+     ! solver_ty%LINKED_SOLVERS(solver_index i) ausgeben
+   ELSE
+     WRITE(*,*) 'linked solver index array                              NOT   allocated'
+   ENDIF
+
+   IF (allocated(solver%LINKED_SOLVER_TYPE_MAP)) THEN
+     WRITE(*,*) 'linked solver type map                                       allocated'
+     ! solver_ty%LINKED_SOLVERS(solver_index i) ausgeben
+   ELSE
+     WRITE(*,*) 'linked solver type map                                 NOT   allocated'
+   ENDIF
+! The map from the available linked solver types to the linked solver types that are defined for the solver. linked_solver_idx varies from 1 to SOLVER_ROUTINES::SOLVER_NUMBER_OF_SOLVER_TYPES. If the particular linked solver type has not been defined on the solver then the LINKED_SOLVER_TYPE_MAP will be NULL.
+
+   WRITE(*,*) 'Type is finished: ', solver%SOLVER_FINISHED
+   WRITE(*,*) 'Label           : '!, solver%LABEL !A user defined label for the solver.
+   WRITE(*,*) 'Output type     : ', solver%OUTPUT_TYPE
+   WRITE(*,*) 'SOLVER TYPE     : ', solver%SOLVE_TYPE
+
+   IF (associated(solver%LINEAR_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the linear solver information                    associated'
+   ELSE
+     WRITE(*,*) 'pointer to the linear solver information                NOT associated' 
+   ENDIF 
+   IF (associated(solver%NONLINEAR_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the nonlinear solver information                 associated'
+   ELSE
+     WRITE(*,*) 'pointer to the nonlinear solver information             NOT associated' 
+   ENDIF 
+   IF (associated(solver%DYNAMIC_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the dynamic solver information                   associated'
+   ELSE
+     WRITE(*,*) 'pointer to the dynamic solver information               NOT associated' 
+   ENDIF 
+   IF (associated(solver%DAE_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the differential-algebraic equation solver       associated'
+   ELSE
+     WRITE(*,*) 'pointer to the differential-algebraic equation solver   NOT associated' 
+   ENDIF 
+   IF (associated(solver%EIGENPROBLEM_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the eigenproblem solver information              associated'
+   ELSE
+     WRITE(*,*) 'pointer to the eigenproblem solver information          NOT associated' 
+   ENDIF
+   IF (associated(solver%OPTIMISER_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the optimiser solver information                 associated'
+   ELSE
+     WRITE(*,*) 'pointer to the optimiser solver information             NOT associated' 
+   ENDIF
+   IF (associated(solver%CELLML_EVALUATOR_SOLVER)) THEN
+     WRITE(*,*) 'pointer to the CellML solver information                    associated'
+   ELSE
+     WRITE(*,*) 'pointer to the CellML solver information                NOT associated' 
+   ENDIF
+   IF (associated(solver%geometricTransformationSolver)) THEN
+     WRITE(*,*) 'pointer to the geometric transformation solver information  associated'
+   ELSE
+     WRITE(*,*) 'pointer to the geometric transformation slv information NOT associated' 
+   ENDIF
+   IF (associated(solver%SOLVER_EQUATIONS)) THEN
+     WRITE(*,*) 'pointer to the solver equations                             associated'
+   ELSE
+     WRITE(*,*) 'pointer to the solver equations                         NOT associated' 
+   ENDIF
+   IF (associated(solver%CELLML_EQUATIONS)) THEN
+     WRITE(*,*) 'pointer to the CELLML equations                             associated'
+   ELSE
+     WRITE(*,*) 'pointer to the CELLML equations                         NOT associated' 
+   ENDIF
+
+   WRITE(*,*) ''     
+   RETURN
+END SUBROUTINE Print_solver_type
+!***************************************************************************************************************
+SUBROUTINE Print_solverEquations_type(solEqu, str, err)
+   TYPE(SOLVER_EQUATIONS_TYPE)     :: solEqu
+   CHARACTER(LEN=*), INTENT(IN)    :: str
+   INTEGER(INTG), INTENT(OUT)      :: err !<The error code.
+
+   WRITE(*,*) ''
+   WRITE(*,*) 'Information for '//str//' of type SOLVER_EQUATIONS_TYPE'
+   WRITE(*,*) '======================================================================='
+
+   IF (associated(solEqu%SOLVER)) THEN
+     WRITE(*,*) 'pointer to the solver                              associated'
+   ELSE
+     WRITE(*,*) 'pointer to the solver                          NOT associated' 
+   ENDIF
+
+   WRITE(*,*) 'Type is finished: ', solEqu%SOLVER_EQUATIONS_FINISHED
+   WRITE(*,*) 'Linearity       : ', solEqu%LINEARITY
+   WRITE(*,*) 'Time dependence : ', solEqu%TIME_DEPENDENCE
+   WRITE(*,*) 'Sparsity type   : ', solEqu%SPARSITY_TYPE ! see SOLVER_ROUTINES_SparsityTypes,SOLVER_ROUTINES
+
+   IF (associated(solEqu%SOLVER_MAPPING)) THEN
+     WRITE(*,*) 'pointer to the solver mapping                      associated'
+   ELSE
+     WRITE(*,*) 'pointer to the solver mapping                  NOT associated' 
+   ENDIF
+   IF (associated(solEqu%SOLVER_MATRICES)) THEN
+     WRITE(*,*) 'pointer to the solver matrices for the problem     associated'
+   ELSE
+     WRITE(*,*) 'pointer to the solver matrices for the problem NOT associated' 
+   ENDIF
+
+   IF (associated(solEqu%BOUNDARY_CONDITIONS)) THEN
+     WRITE(*,*) 'pointer to the boundary condition information      associated'
+   ELSE
+     WRITE(*,*) 'pointer to the boundary condition information  NOT associated' 
+   ENDIF
+
+   WRITE(*,*) ''     
+   RETURN
+END SUBROUTINE Print_solverEquations_type
+!***************************************************************************************************************
+!SUBROUTINE Print_generated_mesh_type()
+!
+!   WRITE(*,*) ''
+!   WRITE(*,*) 'Information for '//str//' of type GENERATED_MESH_TYPE'
+!   WRITE(*,*) '==============================================================='
+
+!   WRITE(*,*) 'User number:      ', genmesh_ty%USER_NUMBER  !The user number of the generated mesh
+!   WRITE(*,*) 'Global number:    ', genmesh_ty%GLOBAL_NUMBER !The corresponding global number for the generated mesh
+!   WRITE(*,*) 'Type is finished: ', genmesh_ty%GENERATED_MESHES
+! ABGEBROCHEN DIESE ROUTINE ZU ERSTELLEN.
+!***************************************************************************************************************
+!***************************************************************************************************************
 
 END MODULE TYPES
 
