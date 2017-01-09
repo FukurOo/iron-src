@@ -3277,8 +3277,8 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
  CONTAINS
 !***************************************************************************************************************
 !***************************************************************************************************************
- SUBROUTINE Print_equations_type(equ_ty, str, err)
-   TYPE(EQUATIONS_TYPE), INTENT(IN)  :: equ_ty
+ SUBROUTINE Print_equations_type(equ, str, err)
+   TYPE(EQUATIONS_TYPE), INTENT(IN)  :: equ
    CHARACTER(LEN=*), INTENT(IN)      :: str
    INTEGER(INTG), INTENT(OUT) :: err !<The error code.
       
@@ -3287,32 +3287,32 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
    WRITE(*,*) '========================================================='
    
    !!! CAUTION! 'associatated' can be undefined! --> Segmentation Fault
-   IF (associated(equ_ty%EQUATIONS_SET)) THEN
+   IF (associated(equ%EQUATIONS_SET)) THEN
      WRITE(*,*) 'pointer to the equations_set                 associated'
    ELSE
      WRITE(*,*) 'pointer to the equations_set             NOT associated' 
    ENDIF
    
-   WRITE(*,*) 'Type is finished: ', equ_ty%EQUATIONS_FINISHED
-   WRITE(*,*) 'Linearity      : ', equ_ty%LINEARITY
-   WRITE(*,*) 'Time dependence: ',  equ_ty%TIME_DEPENDENCE
-   WRITE(*,*) 'Output type    : ', equ_ty%OUTPUT_TYPE
-   WRITE(*,*) 'Sparsity type  : ', equ_ty%SPARSITY_TYPE
-   WRITE(*,*) 'Lumping type   : ', equ_ty%LUMPING_TYPE
+   WRITE(*,*) 'Type is finished: ', equ%EQUATIONS_FINISHED
+   WRITE(*,*) 'Linearity      : ', equ%LINEARITY
+   WRITE(*,*) 'Time dependence: ', equ%TIME_DEPENDENCE
+   WRITE(*,*) 'Output type    : ', equ%OUTPUT_TYPE
+   WRITE(*,*) 'Sparsity type  : ', equ%SPARSITY_TYPE
+   WRITE(*,*) 'Lumping type   : ', equ%LUMPING_TYPE
 
-   IF (associated(equ_ty%INTERPOLATION)) THEN
+   IF (associated(equ%INTERPOLATION)) THEN
      WRITE(*,*) 'pointer to the interpolation information     associated'
    ELSE
      WRITE(*,*) 'pointer to the interpolation information NOT associated' 
    ENDIF  
    
-   IF (associated(equ_ty%EQUATIONS_MAPPING)) THEN
+   IF (associated(equ%EQUATIONS_MAPPING)) THEN
      WRITE(*,*) 'pointer to the equations mapping             associated'
    ELSE
      WRITE(*,*) 'pointer to the equations mapping         NOT associated' 
    ENDIF
 
-   IF (associated(equ_ty%EQUATIONS_MATRICES)) THEN
+   IF (associated(equ%EQUATIONS_MATRICES)) THEN
      WRITE(*,*) 'pointer to the equations matrices            associated'
    ELSE
      WRITE(*,*) 'pointer to the equations matrices        NOT associated' 
@@ -3323,8 +3323,8 @@ END TYPE GENERATED_MESH_ELLIPSOID_TYPE
    RETURN
 END SUBROUTINE Print_equations_type
 !***************************************************************************************************************
-SUBROUTINE Print_equations_set_type(equ_set_ty, str, err)
-   TYPE(EQUATIONS_SET_TYPE), INTENT(IN)  :: equ_set_ty
+SUBROUTINE Print_equations_set_type(equ_set, str, err)
+   TYPE(EQUATIONS_SET_TYPE), INTENT(IN)  :: equ_set
    CHARACTER(LEN=*), INTENT(IN)      :: str
    INTEGER(INTG), INTENT(OUT) :: err !<The error code.
 
@@ -3332,41 +3332,41 @@ SUBROUTINE Print_equations_set_type(equ_set_ty, str, err)
    WRITE(*,*) 'Information for '//str//' of type EQUATIONS_SET_TYPE'
    WRITE(*,*) '==============================================================='
 
-   WRITE(*,*) 'User number:      ', equ_set_ty%USER_NUMBER  !The user identifying number of the equations set
-   WRITE(*,*) 'Global number:    ', equ_set_ty%GLOBAL_NUMBER !The global index of the equations set in the region.
-   WRITE(*,*) 'Type is finished: ', equ_set_ty%EQUATIONS_SET_FINISHED
+   WRITE(*,*) 'User number:      ', equ_set%USER_NUMBER  !The user identifying number of the equations set
+   WRITE(*,*) 'Global number:    ', equ_set%GLOBAL_NUMBER !The global index of the equations set in the region.
+   WRITE(*,*) 'Type is finished: ', equ_set%EQUATIONS_SET_FINISHED
 
-   IF (associated(equ_set_ty%EQUATIONS_SETS)) THEN
+   IF (associated(equ_set%EQUATIONS_SETS)) THEN
      WRITE(*,*) 'pointer to the equations sets                      associated'
    ELSE
      WRITE(*,*) 'pointer to the equations sets                  NOT associated' 
    ENDIF  
 
-   IF (associated(equ_set_ty%REGION)) THEN
+   IF (associated(equ_set%REGION)) THEN
      WRITE(*,*) 'pointer to the region                              associated'
    ELSE
      WRITE(*,*) 'pointer to the region                          NOT associated' 
    ENDIF
 
-   IF (allocated(equ_set_ty%SPECIFICATION)) THEN
+   IF (allocated(equ_set%SPECIFICATION)) THEN
      WRITE(*,*) 'specification array status (eg. [class, type, subtype], unused identifiers are set 0):'
-     WRITE(*,*) '[', equ_set_ty%SPECIFICATION,']'
+     WRITE(*,*) '[', equ_set%SPECIFICATION,']'
    ELSE
      WRITE(*,*) 'specification array                            NOT  allocated'
    ENDIF
    
-   WRITE(*,*) 'Solution method: ', equ_set_ty%SOLUTION_METHOD
+   WRITE(*,*) 'Solution method: ', equ_set%SOLUTION_METHOD
 
    WRITE(*,*) 'ToDo: subroutine Print_EQUATIONS_SET_GEOMETRY_TYPE'
 !    TYPE(EQUATIONS_SET_GEOMETRY_TYPE) :: GEOMETRY !<The geometry information for the equations set.
 
-   IF (associated(equ_set_ty%MATERIALS)) THEN
+   IF (associated(equ_set%MATERIALS)) THEN
      WRITE(*,*) 'pointer to the materials information               associated'
    ELSE
      WRITE(*,*) 'pointer to the materials information           NOT associated' 
    ENDIF 
 
-   IF (associated(equ_set_ty%SOURCE)) THEN
+   IF (associated(equ_set%SOURCE)) THEN
      WRITE(*,*) 'pointer to the source information                  associated'
    ELSE
      WRITE(*,*) 'pointer to the source information              NOT associated' 
@@ -3375,31 +3375,31 @@ SUBROUTINE Print_equations_set_type(equ_set_ty, str, err)
    WRITE(*,*) 'ToDo: subroutine Print_EQUATIONS_SET_DEPENDENT_TYPE'
 !    TYPE(EQUATIONS_SET_DEPENDENT_TYPE) :: DEPENDENT !<The depedent variable information for the equations set.
 
-   IF (associated(equ_set_ty%INDEPENDENT)) THEN
+   IF (associated(equ_set%INDEPENDENT)) THEN
      WRITE(*,*) 'pointer to the indepedent field information        associated'
    ELSE
      WRITE(*,*) 'pointer to the indepedent field information    NOT associated' 
    ENDIF
 
-   IF (associated(equ_set_ty%ANALYTIC)) THEN
+   IF (associated(equ_set%ANALYTIC)) THEN
      WRITE(*,*) 'pointer to the analytic setup information          associated'
    ELSE
      WRITE(*,*) 'pointer to the analytic setup information      NOT associated' 
    ENDIF
 
-   IF (associated(equ_set_ty%DERIVED)) THEN
+   IF (associated(equ_set%DERIVED)) THEN
      WRITE(*,*) 'pointer to the derived field information           associated'
    ELSE
      WRITE(*,*) 'pointer to the derived field information       NOT associated' 
    ENDIF
 
-   IF (associated(equ_set_ty%EQUATIONS)) THEN
+   IF (associated(equ_set%EQUATIONS)) THEN
      WRITE(*,*) 'pointer to the derived equations information       associated'
    ELSE
      WRITE(*,*) 'pointer to the derived equations information   NOT associated' 
    ENDIF
 
-   IF (associated(equ_set_ty%BOUNDARY_CONDITIONS)) THEN
+   IF (associated(equ_set%BOUNDARY_CONDITIONS)) THEN
      WRITE(*,*) 'pointer to the boundary condition information     associated'
    ELSE
      WRITE(*,*) 'pointer to the boundary condition information  NOT associated' 
