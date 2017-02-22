@@ -507,7 +507,7 @@ CONTAINS
                 CALL FlagError("Control loop solvers is not associated.",ERR,ERROR,*999)
               ENDIF
             ELSE
-              !If there are sub loops the recursively solve those control loops
+              !If there are sub loops then recursively solve those control loops
               DO loop_idx=1,CONTROL_LOOP%NUMBER_OF_SUB_LOOPS
                 CONTROL_LOOP2=>CONTROL_LOOP%SUB_LOOPS(loop_idx)%PTR
                 CALL PROBLEM_CONTROL_LOOP_SOLVE(CONTROL_LOOP2,ERR,ERROR,*999)
